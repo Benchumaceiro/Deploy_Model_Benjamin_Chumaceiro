@@ -2,6 +2,7 @@ import datetime as dt
 import os
 from pathlib import Path
 import re
+
 from sklearn.linear_model import Ridge
 import joblib
 import numpy as np
@@ -163,6 +164,9 @@ def train_xgboost(hour):
     xgb.fit(hour_d_train_x, hour_d_train_y)
     return xgb
 
+
+# New function for Ridge Regression
+
 def train_ridge(hour):
     # Avoid modifying the original dataset at the cost of RAM
     hour = hour.copy()
@@ -191,19 +195,22 @@ def postprocess(hour):
     return hour
 
 
-def train_and_persist(model_dir=None, hour_path=None, model='xgboost'):
-    model_path = get_model_path(model_dir, model)
+def train_and_persist(model_dir=None, hour_path=None, model="xgboost"):
     hour = read_data(hour_path)
     hour = preprocess(hour)
     hour = dummify(hour)
     hour = postprocess(hour)
-    
-    if model == 'xgboost':
-        train_model = train_xgboost(hour)  
-    elif model == 'ridge':
-        train_model = train_ridge(hour)
-    joblib.dump(train_model, train_path)
-    return score
+
+    #todo:Implement other models?
+    if model == "xgboost":
+        train_model = train_xgboost(hour)
+    elif model == "ridge":
+       train_model = train_ridge(hour)
+
+    model_path = get_model_path(model_dir, model)
+
+    joblib.dump(train_model, model_path)
+
 
 def get_input_dict(parameters):
     hour_original = read_data()
@@ -247,7 +254,7 @@ def get_input_dict(parameters):
     return df.iloc[0].to_dict()
 
 
-def predict(parameters, model_dir=None, model='xgboost'):
+def predict(parameters, model_dir=None, model= "xgboost"):
     """Returns model prediction.
 
     """
