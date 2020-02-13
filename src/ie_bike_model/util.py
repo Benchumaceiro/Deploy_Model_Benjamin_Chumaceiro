@@ -23,8 +23,7 @@ def get_model_path(model_dir=None, model='xgboost'):
         model_dir = os.path.dirname(__file__)
     
     if model == 'xgboost':
-        model_path = os.path.join(model_dir, "xgboost.pkl")
-        
+        model_path = os.path.join(model_dir, "xgboost.pkl")    
     elif model == 'ridge':
         model_path = os.path.join(model_dir, "ridge.pkl")
 

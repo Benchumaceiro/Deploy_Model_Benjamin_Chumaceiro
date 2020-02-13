@@ -178,7 +178,7 @@ def train_ridge(hour):
 
     hour_d_train_x, _, hour_d_train_y, _, = split_train_test(hour_d)
 
-    ridge = Ridge()
+    ridge = Ridge(alpha=1.0)
 
     ridge.fit(hour_d_train_x, hour_d_train_y)
     return ridge
@@ -192,17 +192,18 @@ def postprocess(hour):
 
 
 def train_and_persist(model_dir=None, hour_path=None, model='xgboost'):
+    model_path = get_model_path(model_dir, model)
     hour = read_data(hour_path)
     hour = preprocess(hour)
     hour = dummify(hour)
     hour = postprocess(hour)
-    model_path = get_model_path(model_dir, model)
+    
     if model == 'xgboost':
-        scikit_model = train_xgboost(hour)  
+        train_model = train_xgboost(hour)  
     elif model == 'ridge':
-        scikit_model = train_ridge(hour)
-    joblib.dump(scikit_model, model_path)
-
+        train_model = train_ridge(hour)
+    joblib.dump(train_model, train_path)
+    return score
 
 def get_input_dict(parameters):
     hour_original = read_data()
